@@ -1,0 +1,55 @@
+
+name: DANIEL PC
+
+on:
+  workflow_dispatch:
+
+jobs:
+  daniel-pc:
+    name: Iniciar DANIEL PC
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Identificação do computador
+        shell: pwsh
+        run: |
+          Write-Host "================================"
+          Write-Host "       DANIEL PC"
+          Write-Host "================================"
+          Write-Host "Computador Windows iniciado!"
+          Write-Host "Usuario: $env:USERNAME"
+          Write-Host "Sistema:"
+          Get-ComputerInfo |
+            Select-Object WindowsProductName,
+                          WindowsVersion
+
+      - name: Verificar recursos
+        shell: pwsh
+        run: |
+          Write-Host "Processador:"
+          Get-CimInstance Win32_Processor |
+            Select-Object Name
+
+          Write-Host "Memoria:"
+          Get-CimInstance Win32_OperatingSystem |
+            Select-Object TotalVisibleMemorySize,
+                          FreePhysicalMemory
+
+          Write-Host "Discos:"
+          Get-PSDrive -PSProvider FileSystem
+
+      - name: Criar pasta DANIEL
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory `
+            -Path "$env:RUNNER_TEMP\DANIEL-PC" `
+            -Force
+
+          Write-Host "Pasta DANIEL PC criada!"
+
+      - name: Finalizar
+        shell: pwsh
+        run: |
+          Write-Host "DANIEL PC configurado!"
+          Write-Host "Este computador e temporario."
